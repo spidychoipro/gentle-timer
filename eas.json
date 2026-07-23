@@ -27,8 +27,5 @@
         "track": "internal"
       }
     }
-  },
-  "update": {
-    "channel": "production"
   }
 }
