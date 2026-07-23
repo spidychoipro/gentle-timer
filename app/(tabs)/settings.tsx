@@ -158,7 +158,7 @@ export default function SettingsScreen() {
             GitHub
           </Text>
           <Text style={[styles.aboutValue, { color: currentTheme.colors.primary }]}>
-            github.com/your-username/gentle-timer
+            github.com/spidychoipro/gentle-timer
           </Text>
         </View>
       </View>

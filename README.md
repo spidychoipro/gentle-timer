@@ -38,7 +38,7 @@ Choose from a variety of beautiful themes:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/gentle-timer.git
+git clone https://github.com/spidychoipro/gentle-timer.git
 cd gentle-timer
 ```
 
