@@ -1,22 +1,23 @@
 import * as Haptics from 'expo-haptics';
-import { Audio } from 'expo-av';
+import { createAudioPlayer } from 'expo-audio';
+
+const GENTLE_SOUND_URI =
+  'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH+JkI+GfnR0goqOj4yGf3l5hIuQkI2HgH1+goqPkI2IgH5+gYmNj42JgX9/gIeLjoyIgH9/gIaIjIuHgYCAgIWGiYqHgYGBgYOEhomJh4GBgYKEhYeIiIeBgYGDhYaHh4eAgYGDhYaHh4eAgYGDhYaHh4eAgYGDhYaHh4eAgQ==';
 
 export const playGentleSound = async (soundEnabled: boolean, quietMode: boolean) => {
   if (!soundEnabled || quietMode) return;
 
   try {
-    // Create a simple beep sound using Audio
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH+JkI+GfnR0goqOj4yGf3l5hIuQkI2HgH1+goqPkI2IgH5+gYmNj42JgX9/gIeLjoyIgH9/gIaIjIuHgYCAgIWGiYqHgYGBgYOEhomJh4GBgYKEhYeIiIeBgYGDhYaHh4eAgYGDhYaHh4eAgYGDhYaHh4eAgYGDhYaHh4eAgQ==' },
-      { shouldPlay: true }
-    );
-    await sound.setVolumeAsync(0.3); // Gentle volume
-    
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if (status.isLoaded && status.didJustFinish) {
-        sound.unloadAsync();
+    const player = createAudioPlayer(GENTLE_SOUND_URI);
+    player.volume = 0.3;
+
+    const subscription = player.addListener('playbackStatusUpdate', (status) => {
+      if (status.didJustFinish || status.error) {
+        subscription.remove();
+        player.remove();
       }
     });
+    player.play();
   } catch (error) {
     console.error('Failed to play sound:', error);
   }
