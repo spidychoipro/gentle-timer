@@ -59,6 +59,23 @@ npm run android
 
 Or scan the QR code with Expo Go app on your Android device.
 
+## Build APK (Standalone App)
+
+To build an APK that works offline without a server:
+
+```bash
+# Install EAS CLI
+npm install -g eas-cli
+
+# Login to Expo
+eas login
+
+# Build APK
+eas build --platform android --profile preview
+```
+
+The APK will be available for download from the Expo dashboard.
+
 ## Usage
 
 ### Timer
@@ -121,6 +138,33 @@ export const themes: Theme[] = [
 ];
 ```
 
+## OTA Updates (Future-Proof)
+
+This app supports Over-The-Air (OTA) updates through EAS Update. To push updates without rebuilding:
+
+```bash
+# Push an update
+eas update --channel production --message "Bug fix update"
+```
+
+Users will receive the update automatically when they open the app.
+
+## Google Play Store Submission
+
+To publish on Google Play Store:
+
+1. Build AAB (Android App Bundle):
+```bash
+eas build --platform android --profile production
+```
+
+2. Submit to Play Store:
+```bash
+eas submit --platform android
+```
+
+3. Follow the Play Store console instructions to complete the listing.
+
 ## Tech Stack
 
 - React Native (Expo)
@@ -129,6 +173,8 @@ export const themes: Theme[] = [
 - Expo AV (audio playback)
 - Expo Haptics (vibration feedback)
 - AsyncStorage (settings persistence)
+- EAS Build (cloud builds)
+- EAS Update (OTA updates)
 
 ## Contributing
 
