@@ -18,7 +18,7 @@ import { useTimer } from '../../hooks/useTimer';
 import { CircularTimer } from '../../components/CircularTimer';
 import { DurationInputModal } from '../../components/DurationInputModal';
 import { AppIcon } from '../../components/AppIcon';
-import { triggerCompletionAlert } from '../../lib/notifications';
+import { playGentleSound, triggerCompletionAlert } from '../../lib/notifications';
 
 const QUICK_ADD = [
   { label: '+1분', seconds: 60 },
@@ -111,7 +111,11 @@ export default function TimerScreen() {
 
   const toggleSoundMode = () => {
     void Haptics.selectionAsync();
-    setSoundMode(!soundOn);
+    const nextSoundOn = !soundOn;
+    setSoundMode(nextSoundOn);
+    if (nextSoundOn) {
+      void playGentleSound(true, false);
+    }
   };
 
   if (isCompleted) {
