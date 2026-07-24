@@ -9,7 +9,7 @@ export interface TimerState {
   initialSeconds: number;
 }
 
-const DEFAULT_DURATION = 5 * 60;
+const DEFAULT_DURATION = 0;
 const MAX_DURATION = 23 * 60 * 60 + 59 * 60 + 59;
 
 const getTimeParts = (totalSeconds: number) => ({
@@ -197,6 +197,34 @@ export const useTimer = () => {
     }));
   }, []);
 
+  const clear = useCallback(() => {
+    deadlineRef.current = null;
+    setIsCompleted(false);
+    setState({
+      ...getTimeParts(0),
+      isRunning: false,
+      totalSeconds: 0,
+      initialSeconds: 0,
+    });
+  }, []);
+
+  const restart = useCallback(() => {
+    setIsCompleted(false);
+    setState((previous) => {
+      if (previous.initialSeconds <= 0) {
+        return previous;
+      }
+
+      deadlineRef.current = Date.now() + previous.initialSeconds * 1000;
+      return {
+        ...previous,
+        ...getTimeParts(previous.initialSeconds),
+        isRunning: true,
+        totalSeconds: previous.initialSeconds,
+      };
+    });
+  }, []);
+
   const clearCompletion = useCallback(() => setIsCompleted(false), []);
 
   const progress =
@@ -216,6 +244,8 @@ export const useTimer = () => {
     start,
     pause,
     reset,
+    clear,
+    restart,
     clearCompletion,
   };
 };

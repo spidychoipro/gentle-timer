@@ -28,10 +28,13 @@ export const triggerVibration = async (vibrationEnabled: boolean, quietMode: boo
 
   try {
     if (quietMode) {
-      // Stronger vibration for quiet mode
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      for (let index = 0; index < 3; index += 1) {
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        if (index < 2) {
+          await new Promise((resolve) => setTimeout(resolve, 320));
+        }
+      }
     } else {
-      // Gentle vibration for normal mode
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
   } catch (error) {
@@ -44,9 +47,8 @@ export const triggerCompletionAlert = async (
   vibrationEnabled: boolean,
   quietMode: boolean
 ) => {
-  // Always try to vibrate
-  await triggerVibration(vibrationEnabled, quietMode);
-  
-  // Play sound based on mode
-  await playGentleSound(soundEnabled, quietMode);
+  await Promise.all([
+    triggerVibration(vibrationEnabled, quietMode),
+    playGentleSound(soundEnabled, quietMode),
+  ]);
 };

@@ -28,14 +28,10 @@ export function CircularTimer({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const remaining = Math.max(0, Math.min(1, 1 - progress));
-  const time =
-    hours > 0
-      ? `${hours.toString().padStart(2, '0')}:${minutes
-          .toString()
-          .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-      : `${minutes.toString().padStart(2, '0')}:${seconds
-          .toString()
-          .padStart(2, '0')}`;
+  const isZero = hours === 0 && minutes === 0 && seconds === 0;
+  const time = `${hours.toString().padStart(2, '0')}:${minutes
+    .toString()
+    .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
   const status = isCompleted
     ? '완료'
@@ -43,7 +39,9 @@ export function CircularTimer({
       ? '집중 중'
       : progress > 0
         ? '잠시 멈춤'
-        : '준비 완료';
+        : isZero
+          ? '시간 설정'
+          : '준비 완료';
 
   return (
     <View style={[styles.container, { width: size, height: size }]}>
@@ -115,8 +113,19 @@ export function CircularTimer({
         >
           {time}
         </Text>
+        <View style={styles.units}>
+          <Text style={[styles.unit, { color: theme.colors.textSecondary }]}>
+            시간
+          </Text>
+          <Text style={[styles.unit, { color: theme.colors.textSecondary }]}>
+            분
+          </Text>
+          <Text style={[styles.unit, { color: theme.colors.textSecondary }]}>
+            초
+          </Text>
+        </View>
         <Text style={[styles.caption, { color: theme.colors.textSecondary }]}>
-          남은 시간
+          {isZero && !isRunning ? '탭하여 시간 설정' : '남은 시간'}
         </Text>
       </View>
     </View>
@@ -155,15 +164,28 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
   },
   time: {
-    fontSize: 54,
+    fontSize: 43,
     fontVariant: ['tabular-nums'],
     fontWeight: '800',
-    letterSpacing: -2,
+    letterSpacing: -1.7,
     marginTop: 15,
+  },
+  units: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 4,
+    paddingHorizontal: 12,
+    width: '100%',
+  },
+  unit: {
+    fontSize: 9,
+    fontWeight: '700',
+    textAlign: 'center',
+    width: 50,
   },
   caption: {
     fontSize: 12,
     fontWeight: '600',
-    marginTop: 4,
+    marginTop: 10,
   },
 });
