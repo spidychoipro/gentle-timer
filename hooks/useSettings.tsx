@@ -22,6 +22,7 @@ interface SettingsContextValue {
   currentTheme: Theme;
   isLoading: boolean;
   toggleQuietMode: () => void;
+  setSoundMode: (enabled: boolean) => void;
   setTheme: (themeId: string) => void;
   toggleVibration: () => void;
   toggleSound: () => void;
@@ -77,6 +78,17 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       updateSettings((previous) => ({
         ...previous,
         quietMode: !previous.quietMode,
+        soundEnabled: previous.quietMode,
+      })),
+    [updateSettings]
+  );
+
+  const setSoundMode = useCallback(
+    (enabled: boolean) =>
+      updateSettings((previous) => ({
+        ...previous,
+        quietMode: !enabled,
+        soundEnabled: enabled,
       })),
     [updateSettings]
   );
@@ -104,6 +116,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       updateSettings((previous) => ({
         ...previous,
         soundEnabled: !previous.soundEnabled,
+        quietMode: previous.soundEnabled,
       })),
     [updateSettings]
   );
@@ -119,6 +132,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       currentTheme,
       isLoading,
       toggleQuietMode,
+      setSoundMode,
       setTheme,
       toggleVibration,
       toggleSound,
@@ -126,6 +140,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     [
       currentTheme,
       isLoading,
+      setSoundMode,
       setTheme,
       settings,
       toggleQuietMode,

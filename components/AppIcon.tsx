@@ -12,10 +12,12 @@ export type AppIconName =
   | 'minus'
   | 'lap'
   | 'volume'
+  | 'volumeOff'
   | 'vibrate'
   | 'moon'
   | 'palette'
-  | 'check';
+  | 'check'
+  | 'delete';
 
 interface AppIconProps {
   name: AppIconName;
@@ -101,6 +103,13 @@ export function AppIcon({
           <Path d="M17.5 6.8a7.4 7.4 0 0 1 0 10.4" {...common} />
         </>
       )}
+      {name === 'volumeOff' && (
+        <>
+          <Path d="M5 10v4h3l4 3V7L8 10H5Z" {...common} />
+          <Line x1="15.5" y1="9.5" x2="20" y2="14" {...common} />
+          <Line x1="20" y1="9.5" x2="15.5" y2="14" {...common} />
+        </>
+      )}
       {name === 'vibrate' && (
         <>
           <Path d="M9 6h6v12H9z" {...common} />
@@ -122,6 +131,13 @@ export function AppIcon({
         </>
       )}
       {name === 'check' && <Polyline points="5,12.5 10,17 19,7.5" {...common} />}
+      {name === 'delete' && (
+        <>
+          <Path d="M9 7h10v10H9l-4-5 4-5Z" {...common} />
+          <Line x1="12" y1="10" x2="16" y2="14" {...common} />
+          <Line x1="16" y1="10" x2="12" y2="14" {...common} />
+        </>
+      )}
     </Svg>
   );
 }
