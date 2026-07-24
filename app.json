@@ -19,8 +19,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "package": "com.gentletimer.app",
-      "permissions": ["VIBRATE"],
-      "versionCode": 4
+      "permissions": ["VIBRATE"]
     },
     "web": {
       "favicon": "./assets/favicon.png",
