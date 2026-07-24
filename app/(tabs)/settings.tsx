@@ -13,6 +13,7 @@ import * as Haptics from 'expo-haptics';
 import { useSettings } from '../../hooks/useSettings';
 import { themes } from '../../lib/themes';
 import { AppIcon, AppIconName } from '../../components/AppIcon';
+import { playGentleSound } from '../../lib/notifications';
 
 interface SettingRowProps {
   icon: AppIconName;
@@ -27,11 +28,19 @@ export default function SettingsScreen() {
   const {
     settings,
     currentTheme,
-    toggleQuietMode,
+    setSoundMode,
     setTheme,
     toggleVibration,
-    toggleSound,
   } = useSettings();
+  const soundOn = settings.soundEnabled && !settings.quietMode;
+
+  const handleSoundModeChange = () => {
+    const nextSoundOn = !soundOn;
+    setSoundMode(nextSoundOn);
+    if (nextSoundOn) {
+      void playGentleSound(true, false);
+    }
+  };
 
   const SettingRow = ({
     icon,
@@ -121,18 +130,15 @@ export default function SettingsScreen() {
             ]}
           >
             <SettingRow
-              icon="moon"
-              title="조용한 모드"
-              description="완료음 없이 진동으로만 알려드려요"
-              value={settings.quietMode}
-              onChange={toggleQuietMode}
-            />
-            <SettingRow
-              icon="volume"
-              title="완료음"
-              description="시간이 끝나면 부드러운 소리를 재생해요"
-              value={settings.soundEnabled}
-              onChange={toggleSound}
+              icon={soundOn ? 'volume' : 'volumeOff'}
+              title={soundOn ? '소리 모드' : '무음 모드'}
+              description={
+                soundOn
+                  ? '시간이 끝나면 차임을 재생해요 · 지금 미리 듣기'
+                  : '소리 없이 진동과 화면으로 알려드려요'
+              }
+              value={soundOn}
+              onChange={handleSoundModeChange}
             />
             <SettingRow
               icon="vibrate"
@@ -260,7 +266,7 @@ export default function SettingsScreen() {
                 버전
               </Text>
               <Text style={[styles.aboutValue, { color: currentTheme.colors.text }]}>
-                1.2.2
+                1.3.0
               </Text>
             </View>
             <Pressable
