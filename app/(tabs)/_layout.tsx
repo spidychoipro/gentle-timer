@@ -1,12 +1,24 @@
 import { Tabs } from 'expo-router';
-import { Text, ColorValue } from 'react-native';
+import { ColorValue } from 'react-native';
+import { AppIcon, AppIconName } from '../../components/AppIcon';
 import { useSettings } from '../../hooks/useSettings';
 
-function TabIcon({ name, color, focused }: { name: string; color: ColorValue; focused: boolean }) {
+function TabIcon({
+  name,
+  color,
+  focused,
+}: {
+  name: AppIconName;
+  color: ColorValue;
+  focused: boolean;
+}) {
   return (
-    <Text style={{ fontSize: 24, color: color as string, opacity: focused ? 1 : 0.6 }}>
-      {name === 'timer' ? '⏱️' : name === 'stopwatch' ? '⏲️' : '⚙️'}
-    </Text>
+    <AppIcon
+      name={name}
+      color={color as string}
+      size={focused ? 24 : 23}
+      strokeWidth={focused ? 2.2 : 1.8}
+    />
   );
 }
 
@@ -16,26 +28,32 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        headerShown: false,
+        sceneStyle: {
+          backgroundColor: currentTheme.colors.background,
+        },
         tabBarActiveTintColor: currentTheme.colors.primary,
         tabBarInactiveTintColor: currentTheme.colors.textSecondary,
+        tabBarHideOnKeyboard: true,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '700',
+          marginTop: 2,
+        },
         tabBarStyle: {
           backgroundColor: currentTheme.colors.surface,
           borderTopColor: currentTheme.colors.border,
-        },
-        headerStyle: {
-          backgroundColor: currentTheme.colors.background,
-        },
-        headerTintColor: currentTheme.colors.text,
-        headerTitleStyle: {
-          fontWeight: 'bold',
+          borderTopWidth: 1,
+          height: 72,
+          paddingBottom: 8,
+          paddingTop: 8,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Timer',
-          headerTitle: 'Gentle Timer',
+          title: '타이머',
           tabBarIcon: ({ color, focused }) => (
             <TabIcon name="timer" color={color} focused={focused} />
           ),
@@ -44,8 +62,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="stopwatch"
         options={{
-          title: 'Stopwatch',
-          headerTitle: 'Stopwatch',
+          title: '스톱워치',
           tabBarIcon: ({ color, focused }) => (
             <TabIcon name="stopwatch" color={color} focused={focused} />
           ),
@@ -54,8 +71,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
-          headerTitle: 'Settings',
+          title: '설정',
           tabBarIcon: ({ color, focused }) => (
             <TabIcon name="settings" color={color} focused={focused} />
           ),

@@ -1,8 +1,8 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useSettings } from '../hooks/useSettings';
+import { SettingsProvider, useSettings } from '../hooks/useSettings';
 
-export default function RootLayout() {
+function AppShell() {
   const { currentTheme } = useSettings();
 
   return (
@@ -22,5 +22,13 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <SettingsProvider>
+      <AppShell />
+    </SettingsProvider>
   );
 }

@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Theme } from '../lib/themes';
+import { AppIcon } from './AppIcon';
 
 interface TimerPickerProps {
   hours: number;
@@ -23,94 +25,123 @@ export const TimerPicker: React.FC<TimerPickerProps> = ({
   theme,
   disabled = false,
 }) => {
+  const changeValue = (
+    value: number,
+    max: number,
+    amount: number,
+    onChange: (value: number) => void
+  ) => {
+    if (disabled) {
+      return;
+    }
+
+    void Haptics.selectionAsync();
+    onChange(Math.max(0, Math.min(max, value + amount)));
+  };
+
   const renderPicker = (
     label: string,
     value: number,
     max: number,
-    onChange: (val: number) => void
+    onChange: (value: number) => void
   ) => (
-    <View style={[styles.pickerContainer, { backgroundColor: theme.colors.surface }]}>
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.colors.primary }]}
-        onPress={() => !disabled && onChange(Math.min(value + 1, max))}
-        disabled={disabled}
+    <View style={styles.picker}>
+      <Pressable
+        accessibilityLabel={`${label} 늘리기`}
+        disabled={disabled || value >= max}
+        onPress={() => changeValue(value, max, 1, onChange)}
+        style={({ pressed }) => [
+          styles.stepButton,
+          {
+            backgroundColor: `${theme.colors.primary}16`,
+            opacity: disabled || value >= max ? 0.35 : pressed ? 0.62 : 1,
+          },
+        ]}
       >
-        <Text style={[styles.buttonText, { color: theme.colors.text }]}>+</Text>
-      </TouchableOpacity>
-      
-      <View style={[styles.valueContainer, { borderColor: theme.colors.border }]}>
-        <Text style={[styles.value, { color: theme.colors.text }]}>
-          {value.toString().padStart(2, '0')}
-        </Text>
-        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
-          {label}
-        </Text>
-      </View>
-      
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.colors.primary }]}
-        onPress={() => !disabled && onChange(Math.max(value - 1, 0))}
-        disabled={disabled}
+        <AppIcon name="plus" size={18} color={theme.colors.primary} />
+      </Pressable>
+
+      <Text style={[styles.value, { color: theme.colors.text }]}>
+        {value.toString().padStart(2, '0')}
+      </Text>
+      <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
+        {label}
+      </Text>
+
+      <Pressable
+        accessibilityLabel={`${label} 줄이기`}
+        disabled={disabled || value <= 0}
+        onPress={() => changeValue(value, max, -1, onChange)}
+        style={({ pressed }) => [
+          styles.stepButton,
+          {
+            backgroundColor: `${theme.colors.primary}16`,
+            opacity: disabled || value <= 0 ? 0.35 : pressed ? 0.62 : 1,
+          },
+        ]}
       >
-        <Text style={[styles.buttonText, { color: theme.colors.text }]}>-</Text>
-      </TouchableOpacity>
+        <AppIcon name="minus" size={18} color={theme.colors.primary} />
+      </Pressable>
     </View>
   );
 
   return (
-    <View style={styles.container}>
-      {renderPicker('HRS', hours, 23, onHoursChange)}
-      <Text style={[styles.separator, { color: theme.colors.text }]}>:</Text>
-      {renderPicker('MIN', minutes, 59, onMinutesChange)}
-      <Text style={[styles.separator, { color: theme.colors.text }]}>:</Text>
-      {renderPicker('SEC', seconds, 59, onSecondsChange)}
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.border,
+        },
+      ]}
+    >
+      {renderPicker('시간', hours, 23, onHoursChange)}
+      <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+      {renderPicker('분', minutes, 59, onMinutesChange)}
+      <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+      {renderPicker('초', seconds, 59, onSecondsChange)}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pickerContainer: {
-    alignItems: 'center',
-    borderRadius: 12,
-    padding: 8,
-  },
-  button: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  valueContainer: {
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginVertical: 8,
+    borderRadius: 24,
     borderWidth: 1,
-    borderRadius: 8,
-    minWidth: 70,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    width: '100%',
+  },
+  picker: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  stepButton: {
+    alignItems: 'center',
+    borderRadius: 16,
+    height: 32,
+    justifyContent: 'center',
+    width: 44,
   },
   value: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    fontSize: 28,
     fontVariant: ['tabular-nums'],
+    fontWeight: '700',
+    letterSpacing: -0.7,
+    marginTop: 9,
   },
   label: {
-    fontSize: 12,
-    marginTop: 4,
+    fontSize: 11,
+    fontWeight: '600',
+    marginBottom: 9,
+    marginTop: 1,
   },
-  separator: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    marginHorizontal: 8,
+  divider: {
+    height: 62,
+    opacity: 0.7,
+    width: StyleSheet.hairlineWidth,
   },
 });
