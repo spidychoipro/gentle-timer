@@ -2,7 +2,7 @@ name: Build and Release APK
 
 on:
   push:
-    branches: [main]
+    branches: [master, main]
   workflow_dispatch:
 
 jobs:
@@ -23,7 +23,8 @@ jobs:
           
       - run: npm install
           
-      - run: eas build --platform android --profile preview --non-interactive
+      - name: Build APK
+        run: eas build --platform android --profile preview --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           
@@ -35,13 +36,22 @@ jobs:
           echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
           echo "build_id=$EAS_BUILD_ID" >> $GITHUB_OUTPUT
           
+      - name: Download APK
+        run: |
+          curl -L -o GentleTimer.apk "${{ steps.get-apk.outputs.apk_url }}"
+          
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}
-          name: "Gentle Timer v${{ github.run_number }}"
+          tag_name: v${{ steps.version.outputs.version }}
+          name: "Gentle Timer v${{ steps.version.outputs.version }}"
           body: "Automated build from commit ${{ github.sha }}"
-          files: |
-            ${{ steps.get-apk.outputs.apk_url }}
+          files: GentleTimer.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
