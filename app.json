@@ -2,7 +2,7 @@
   "expo": {
     "name": "Gentle Timer",
     "slug": "gentle-timer",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -19,8 +19,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "package": "com.gentletimer.app",
-      "permissions": ["VIBRATE"],
-      "versionCode": 4
+      "permissions": ["VIBRATE"]
     },
     "web": {
       "favicon": "./assets/favicon.png",

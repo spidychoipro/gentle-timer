@@ -70,11 +70,18 @@ npm install -g eas-cli
 # Login to Expo
 eas login
 
-# Build APK
-eas build --platform android --profile preview
+# Build an update-compatible APK
+eas build --platform android --profile release-apk
 ```
 
-The APK will be available for download from the Expo dashboard.
+The APK will be available for download from the Expo dashboard. The
+`release-apk` profile always uses the Android keystore stored by EAS and
+automatically increments the Android build number.
+
+Only publish the EAS-built APK as an installable release. The GitHub Actions
+Android workflow is compile validation only and intentionally does not upload
+its APK, because an APK signed by a different key cannot update an installed
+copy of the app.
 
 ## Usage
 

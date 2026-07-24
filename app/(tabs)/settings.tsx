@@ -260,7 +260,7 @@ export default function SettingsScreen() {
                 버전
               </Text>
               <Text style={[styles.aboutValue, { color: currentTheme.colors.text }]}>
-                1.2.1
+                1.2.2
               </Text>
             </View>
             <Pressable
