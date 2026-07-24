@@ -20,7 +20,7 @@
       },
       "package": "com.gentletimer.app",
       "permissions": ["VIBRATE"],
-      "versionCode": 2
+      "versionCode": 7
     },
     "web": {
       "favicon": "./assets/favicon.png",
