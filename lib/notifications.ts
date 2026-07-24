@@ -1,16 +1,21 @@
 import * as Haptics from 'expo-haptics';
 import { Audio } from 'expo-av';
+import { AlertMode } from '../hooks/useSettings';
 
-export const playGentleSound = async (soundEnabled: boolean, quietMode: boolean) => {
-  if (!soundEnabled || quietMode) return;
+export const playGentleSound = async (alertMode: AlertMode) => {
+  if (alertMode === 'silent') return;
 
   try {
-    // Create a simple beep sound using Audio
+    await Audio.setAudioModeAsync({
+      playsInSilentModeIOS: false,
+      staysActiveInBackground: false,
+    });
+
     const { sound } = await Audio.Sound.createAsync(
       { uri: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH+JkI+GfnR0goqOj4yGf3l5hIuQkI2HgH1+goqPkI2IgH5+gYmNj42JgX9/gIeLjoyIgH9/gIaIjIuHgYCAgIWGiYqHgYGBgYOEhomJh4GBgYKEhYeIiIeBgYGDhYaHh4eAgYGDhYaHh4eAgYGDhYaHh4eAgYGDhYaHh4eAgQ==' },
       { shouldPlay: true }
     );
-    await sound.setVolumeAsync(0.3); // Gentle volume
+    await sound.setVolumeAsync(0.3);
     
     sound.setOnPlaybackStatusUpdate((status) => {
       if (status.isLoaded && status.didJustFinish) {
@@ -22,15 +27,13 @@ export const playGentleSound = async (soundEnabled: boolean, quietMode: boolean)
   }
 };
 
-export const triggerVibration = async (vibrationEnabled: boolean, quietMode: boolean) => {
+export const triggerVibration = async (vibrationEnabled: boolean, alertMode: AlertMode) => {
   if (!vibrationEnabled) return;
 
   try {
-    if (quietMode) {
-      // Stronger vibration for quiet mode
+    if (alertMode === 'silent') {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     } else {
-      // Gentle vibration for normal mode
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
   } catch (error) {
@@ -39,13 +42,9 @@ export const triggerVibration = async (vibrationEnabled: boolean, quietMode: boo
 };
 
 export const triggerCompletionAlert = async (
-  soundEnabled: boolean,
-  vibrationEnabled: boolean,
-  quietMode: boolean
+  alertMode: AlertMode,
+  vibrationEnabled: boolean
 ) => {
-  // Always try to vibrate
-  await triggerVibration(vibrationEnabled, quietMode);
-  
-  // Play sound based on mode
-  await playGentleSound(soundEnabled, quietMode);
+  await triggerVibration(vibrationEnabled, alertMode);
+  await playGentleSound(alertMode);
 };

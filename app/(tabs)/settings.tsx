@@ -7,10 +7,10 @@ export default function SettingsScreen() {
   const {
     settings,
     currentTheme,
+    quietMode,
     toggleQuietMode,
     setTheme,
     toggleVibration,
-    toggleSound,
   } = useSettings();
 
   return (
@@ -18,19 +18,27 @@ export default function SettingsScreen() {
       style={[styles.container, { backgroundColor: currentTheme.colors.background }]}
       contentContainerStyle={styles.content}
     >
-      {/* Quiet Mode */}
+      {/* Quiet Mode - Primary Feature */}
       <View style={[styles.section, { backgroundColor: currentTheme.colors.surface }]}>
+        <View style={styles.quietModeHeader}>
+          <Text style={[styles.quietModeTitle, { color: currentTheme.colors.text }]}>
+            Quiet Mode
+          </Text>
+          <Text style={[styles.quietModeDescription, { color: currentTheme.colors.textSecondary }]}>
+            For study cafes & libraries — alerts via vibration only
+          </Text>
+        </View>
         <View style={styles.settingRow}>
           <View style={styles.settingInfo}>
             <Text style={[styles.settingTitle, { color: currentTheme.colors.text }]}>
-              Quiet Mode
+              Enable Quiet Mode
             </Text>
             <Text style={[styles.settingDescription, { color: currentTheme.colors.textSecondary }]}>
-              Mute sounds, use vibration only
+              Mute all sounds, use vibration only
             </Text>
           </View>
           <Switch
-            value={settings.quietMode}
+            value={quietMode}
             onValueChange={toggleQuietMode}
             trackColor={{ false: currentTheme.colors.border, true: currentTheme.colors.primary }}
             thumbColor={currentTheme.colors.text}
@@ -38,29 +46,12 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {/* Sound & Vibration */}
+      {/* Vibration */}
       <View style={[styles.section, { backgroundColor: currentTheme.colors.surface }]}>
         <Text style={[styles.sectionTitle, { color: currentTheme.colors.text }]}>
-          Sound & Vibration
+          Vibration
         </Text>
         
-        <View style={styles.settingRow}>
-          <View style={styles.settingInfo}>
-            <Text style={[styles.settingTitle, { color: currentTheme.colors.text }]}>
-              Sound
-            </Text>
-            <Text style={[styles.settingDescription, { color: currentTheme.colors.textSecondary }]}>
-              Play gentle chime on completion
-            </Text>
-          </View>
-          <Switch
-            value={settings.soundEnabled}
-            onValueChange={toggleSound}
-            trackColor={{ false: currentTheme.colors.border, true: currentTheme.colors.primary }}
-            thumbColor={currentTheme.colors.text}
-          />
-        </View>
-
         <View style={styles.settingRow}>
           <View style={styles.settingInfo}>
             <Text style={[styles.settingTitle, { color: currentTheme.colors.text }]}>
@@ -149,7 +140,7 @@ export default function SettingsScreen() {
             Version
           </Text>
           <Text style={[styles.aboutValue, { color: currentTheme.colors.text }]}>
-            1.0.0
+            1.1.0
           </Text>
         </View>
         
@@ -177,6 +168,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
+  },
+  quietModeHeader: {
+    marginBottom: 16,
+  },
+  quietModeTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  quietModeDescription: {
+    fontSize: 14,
   },
   sectionTitle: {
     fontSize: 18,

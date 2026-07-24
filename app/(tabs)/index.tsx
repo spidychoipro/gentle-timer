@@ -30,11 +30,9 @@ export default function TimerScreen() {
 
   useEffect(() => {
     if (isCompleted) {
-      // Trigger notification
       triggerCompletionAlert(
-        settings.soundEnabled,
-        settings.vibrationEnabled,
-        settings.quietMode
+        settings.alertMode,
+        settings.vibrationEnabled
       );
 
       // Flash animation
@@ -136,7 +134,7 @@ export default function TimerScreen() {
           </TouchableOpacity>
         </View>
 
-        {settings.quietMode && (
+        {settings.alertMode === 'silent' && (
           <View style={[styles.quietIndicator, { backgroundColor: currentTheme.colors.surface }]}>
             <Text style={[styles.quietText, { color: currentTheme.colors.textSecondary }]}>
               🔇 Quiet Mode Active

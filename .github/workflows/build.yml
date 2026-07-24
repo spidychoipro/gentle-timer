@@ -1,0 +1,47 @@
+name: Build and Release APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+          
+      - run: npm install
+          
+      - run: eas build --platform android --profile preview --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          
+      - name: Get APK URL
+        id: get-apk
+        run: |
+          EAS_BUILD_ID=$(eas build:list --platform android --limit 1 --json --non-interactive | jq -r '.[0].id')
+          APK_URL=$(eas build:view $EAS_BUILD_ID --json --non-interactive | jq -r '.artifacts.buildUrl')
+          echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
+          echo "build_id=$EAS_BUILD_ID" >> $GITHUB_OUTPUT
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: "Gentle Timer v${{ github.run_number }}"
+          body: "Automated build from commit ${{ github.sha }}"
+          files: |
+            ${{ steps.get-apk.outputs.apk_url }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

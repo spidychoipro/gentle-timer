@@ -2,18 +2,18 @@ import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Theme, themes } from '../lib/themes';
 
+export type AlertMode = 'sound' | 'silent';
+
 export interface Settings {
-  quietMode: boolean;
+  alertMode: AlertMode;
   themeId: string;
   vibrationEnabled: boolean;
-  soundEnabled: boolean;
 }
 
 const DEFAULT_SETTINGS: Settings = {
-  quietMode: false,
+  alertMode: 'silent',
   themeId: 'dracula',
   vibrationEnabled: true,
-  soundEnabled: true,
 };
 
 const SETTINGS_KEY = '@gentle_timer_settings';
@@ -56,7 +56,12 @@ export const useSettings = () => {
   };
 
   const toggleQuietMode = () => {
-    saveSettings({ ...settings, quietMode: !settings.quietMode });
+    const newMode: AlertMode = settings.alertMode === 'silent' ? 'sound' : 'silent';
+    saveSettings({ ...settings, alertMode: newMode });
+  };
+
+  const setAlertMode = (mode: AlertMode) => {
+    saveSettings({ ...settings, alertMode: mode });
   };
 
   const setTheme = (themeId: string) => {
@@ -67,17 +72,15 @@ export const useSettings = () => {
     saveSettings({ ...settings, vibrationEnabled: !settings.vibrationEnabled });
   };
 
-  const toggleSound = () => {
-    saveSettings({ ...settings, soundEnabled: !settings.soundEnabled });
-  };
-
   return {
     settings,
     currentTheme,
     isLoading,
+    quietMode: settings.alertMode === 'silent',
+    soundEnabled: settings.alertMode === 'sound',
     toggleQuietMode,
+    setAlertMode,
     setTheme,
     toggleVibration,
-    toggleSound,
   };
 };
